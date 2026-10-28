@@ -1,0 +1,3 @@
+import ResourceManagementPage from '../components/ResourceManagementPage.jsx';
+const config={title:"Materials",endpoint:"/materials",singular:"material",description:"Manage printing materials and material metadata.",fields:[{key:"name",label:"Name",type:"text",required:true},{key:"code",label:"Material code",type:"text",required:false},{key:"description",label:"Description",type:"textarea",required:false},{key:"costPerGram",label:"Cost per gram (\u20b9)",type:"number",required:false},{key:"active",label:"Active",type:"checkbox",required:false}],emptyDescription:"No records are returned by the configured API. This screen does not use fabricated data."};
+export default function AdminMaterialsPage(){return <ResourceManagementPage config={config}/>}

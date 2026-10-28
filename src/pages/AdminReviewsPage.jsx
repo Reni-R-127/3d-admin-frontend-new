@@ -1,0 +1,3 @@
+import ResourceManagementPage from '../components/ResourceManagementPage.jsx';
+const config={title:"Reviews",endpoint:"/admin/reviews",singular:"review",description:"Moderate customer reviews published to the storefront.",fields:[{key:"customerName",label:"Customer name",type:"text",required:true},{key:"rating",label:"Rating (1\u20135)",type:"number",required:true},{key:"body",label:"Review",type:"textarea",required:true},{key:"status",label:"Status",type:"select",required:false,options:['pending','published','approved','rejected']}],emptyDescription:"No records are returned by the configured API. This screen does not use fabricated data."};
+export default function AdminReviewsPage(){return <ResourceManagementPage config={config}/>}

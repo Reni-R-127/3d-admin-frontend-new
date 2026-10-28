@@ -1,0 +1,3 @@
+import ResourceManagementPage from '../components/ResourceManagementPage.jsx';
+const config={title:"Customers",endpoint:"/admin/customers",singular:"customer",description:"Customer records returned by the backend. Avoid storing payment credentials here.",fields:[{key:"name",label:"Customer name",type:"text",required:true},{key:"email",label:"Email",type:"email",required:true},{key:"phone",label:"Phone",type:"text",required:false},{key:"notes",label:"Internal notes",type:"textarea",required:false}],emptyDescription:"No records are returned by the configured API. This screen does not use fabricated data."};
+export default function AdminCustomersPage(){return <ResourceManagementPage config={config}/>}

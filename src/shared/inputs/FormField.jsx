@@ -1,0 +1,1 @@
+export default function FormField({label,help,error,as='input',...props}) { const Tag=as; return <label className="form-field"><span>{label}</span><Tag {...props}/>{help&&<small>{help}</small>}{error&&<small className="field-error">{error}</small>}</label>; }

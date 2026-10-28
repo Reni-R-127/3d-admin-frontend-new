@@ -1,0 +1,3 @@
+import EmptyState from '../feedback/EmptyState.jsx';
+import LoadingState from '../loaders/LoadingState.jsx';
+export default function DataTable({columns,rows,loading,error,emptyTitle='No records found',emptyDescription='There is no data to display yet.',rowKey='_id'}) { if(loading)return <LoadingState/>;if(error)return <div className="inline-error" role="alert">{error}</div>;if(!rows?.length)return <EmptyState title={emptyTitle} description={emptyDescription}/>;return <div className="table-scroll"><table className="data-table"><thead><tr>{columns.map(c=><th key={c.key}>{c.label}</th>)}</tr></thead><tbody>{rows.map((row,i)=><tr key={row[rowKey]||i}>{columns.map(c=><td key={c.key}>{c.render?c.render(row):row[c.key]??'—'}</td>)}</tr>)}</tbody></table></div>; }

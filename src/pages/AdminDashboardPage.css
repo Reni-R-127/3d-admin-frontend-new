@@ -1,0 +1,8 @@
+@import "../components/AdminDashboardPage/AdminDashboardHeader/AdminDashboardHeader.css";
+@import "../components/AdminDashboardPage/AdminDashboardStats/AdminDashboardStats.css";
+@import "../components/AdminDashboardPage/AdminDashboardRecentOrders/AdminDashboardRecentOrders.css";
+@import "../components/AdminDashboardPage/AdminDashboardPendingRequests/AdminDashboardPendingRequests.css";
+@import "../components/AdminDashboardPage/AdminDashboardActivity/AdminDashboardActivity.css";
+@import "../components/AdminProductsPage/AdminProductsFilters/AdminProductsFilters.css";
+@import "../components/AdminProductsPage/AdminProductsTable/AdminProductsTable.css";
+@import "../components/AdminProductsPage/AdminProductsActions/AdminProductsActions.css";

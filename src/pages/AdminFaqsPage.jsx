@@ -1,0 +1,3 @@
+import ResourceManagementPage from '../components/ResourceManagementPage.jsx';
+const config={title:"FAQs",endpoint:"/faqs",singular:"FAQ",description:"Manage published questions and answers on the public website.",fields:[{key:"question",label:"Question",type:"text",required:true},{key:"answer",label:"Answer",type:"textarea",required:true},{key:"sortOrder",label:"Display order",type:"number",required:false},{key:"published",label:"Published",type:"checkbox",required:false}],emptyDescription:"No records are returned by the configured API. This screen does not use fabricated data."};
+export default function AdminFaqsPage(){return <ResourceManagementPage config={config}/>}

@@ -1,0 +1,3 @@
+import ResourceManagementPage from '../components/ResourceManagementPage.jsx';
+const config={title:"Inventory",endpoint:"/inventory",singular:"inventory item",description:"Review stock levels and record adjustments.",fields:[{key:"name",label:"Item name",type:"text",required:true},{key:"sku",label:"SKU",type:"text",required:false},{key:"stock",label:"Stock quantity",type:"number",required:true},{key:"reorderLevel",label:"Reorder level",type:"number",required:false},{key:"location",label:"Storage location",type:"text",required:false}],emptyDescription:"No records are returned by the configured API. This screen does not use fabricated data."};
+export default function AdminInventoryPage(){return <ResourceManagementPage config={config}/>}

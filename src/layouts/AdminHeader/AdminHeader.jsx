@@ -1,0 +1,4 @@
+import { Bell, Menu, Search, ChevronRight } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { navigation } from '../../constants/navigation.js';
+export default function AdminHeader({onMenu,user}) { const location=useLocation();const current=navigation.find(n=>n.path===location.pathname)?.label||'Management';return <header className="admin-header"><button className="icon-button menu-trigger" onClick={onMenu} aria-label="Open navigation"><Menu size={21}/></button><div className="breadcrumb"><span>Studio</span><ChevronRight size={15}/><b>{current}</b></div><div className="header-actions"><div className="api-indicator"><i/> Connected workspace</div><button className="icon-button notification-button" aria-label="Notifications"><Bell size={18}/></button><span className="header-avatar" title={user?.email}>{(user?.email||'A').slice(0,1).toUpperCase()}</span></div></header>; }

@@ -1,0 +1,2 @@
+import { CalendarDays } from 'lucide-react';
+export default function AdminDashboardHeader(){return <div className="dashboard-welcome"><div><span className="eyebrow">YOUR STUDIO AT A GLANCE</span><h1>Good work starts here.</h1><p>Here's what's happening across your 3D printing business.</p></div><span className="today-pill"><CalendarDays size={16}/>{new Intl.DateTimeFormat('en-IN',{dateStyle:'medium'}).format(new Date())}</span></div>}
