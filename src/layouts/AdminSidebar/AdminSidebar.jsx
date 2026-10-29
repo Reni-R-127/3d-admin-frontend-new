@@ -1,4 +1,101 @@
-import { NavLink } from 'react-router-dom';
-import { Box, X, Printer, LogOut } from 'lucide-react';
-import { navigation } from '../../constants/navigation.js';
-export default function AdminSidebar({open,onClose,user,onLogout}) { const groups=[...new Set(navigation.map(n=>n.group))];return <><div className={`sidebar-scrim ${open?'visible':''}`} onClick={onClose}/><aside className={`admin-sidebar ${open?'sidebar-open':''}`}><div className="sidebar-brand"><span className="brand-symbol"><Printer size={20}/></span><span><b>ProJenius</b><small>3D PRINTING STUDIO</small></span><button className="icon-button sidebar-x" onClick={onClose} aria-label="Close navigation"><X size={18}/></button></div><div className="sidebar-workspace"><span className="workspace-dot"/> Studio workspace <Box size={14}/></div><nav className="side-nav">{groups.map(group=><div className="nav-group" key={group}><p>{group}</p>{navigation.filter(n=>n.group===group).map(item=>{const Icon=item.icon;return <NavLink key={item.path} to={item.path} end={item.path==='/'} onClick={onClose} className={({isActive})=>`nav-link ${isActive?'active':''}`}><Icon size={18}/><span>{item.label}</span></NavLink>})}</div>)}</nav><div className="sidebar-profile"><span className="user-avatar">{(user?.email||'A').slice(0,1).toUpperCase()}</span><span className="profile-copy"><b>{user?.email||'Administrator'}</b><small>{user?.role||'admin'}</small></span><button className="icon-button profile-logout" onClick={onLogout} aria-label="Sign out" title="Sign out"><LogOut size={16}/></button></div></aside></>; }
+import { NavLink } from "react-router-dom";
+import { Box, X, Printer, LogOut } from "lucide-react";
+import { navigation } from "../../constants/navigation.js";
+
+export default function AdminSidebar({
+  open,
+  onClose,
+  user,
+  onLogout,
+}) {
+  const groups = [...new Set(navigation.map((item) => item.group))];
+
+  return (
+    <>
+      <div
+        className={`sidebar-scrim ${open ? "visible" : ""}`}
+        onClick={onClose}
+      />
+
+      <aside
+        className={`admin-sidebar ${open ? "sidebar-open" : ""}`}
+      >
+        <div className="sidebar-brand">
+          <span className="brand-symbol">
+            <Printer size={20} />
+          </span>
+
+          <span>
+            <b>ProJenius</b>
+            <small>3D PRINTING STUDIO</small>
+          </span>
+
+          <button
+            className="icon-button sidebar-x"
+            onClick={onClose}
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="sidebar-workspace">
+          <span className="workspace-dot" />
+          Studio workspace
+          <Box size={14} />
+        </div>
+
+        <nav className="side-nav">
+          {groups.map((group) => (
+            <div className="nav-group" key={group}>
+              <p>{group}</p>
+
+              {navigation
+                .filter((item) => item.group === group)
+                .map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      end={item.path === "/"}
+                      onClick={onClose}
+                      className={({ isActive }) =>
+                        `nav-link ${isActive ? "active" : ""}`
+                      }
+                    >
+                      <Icon size={18} />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="sidebar-profile">
+          <span className="user-avatar">
+            {(user?.email || "A").slice(0, 1).toUpperCase()}
+          </span>
+
+          <span className="profile-copy">
+            <b>{user?.email || "Administrator"}</b>
+            <small>{user?.role || "admin"}</small>
+          </span>
+
+          {typeof onLogout === "function" && (
+            <button
+              className="icon-button profile-logout"
+              onClick={onLogout}
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <LogOut size={16} />
+            </button>
+          )}
+        </div>
+      </aside>
+    </>
+  );
+}

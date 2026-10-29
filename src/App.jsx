@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import AdminLoginPage from "./pages/AdminLoginPage.jsx";
 import { api } from "./api.js";
-
 import AdminLayout from "./layouts/AdminLayout/AdminLayout.jsx";
 
 import AdminDashboardPage from "./pages/AdminDashboardPage.jsx";
@@ -26,20 +24,12 @@ import AdminReportsPage from "./pages/AdminReportsPage.jsx";
 import AdminSettingsPage from "./pages/AdminSettingsPage.jsx";
 import AdminFaqsPage from "./pages/AdminFaqsPage.jsx";
 
-// Local development only.
-// This user is never used by a production build.
-const LOCAL_DEV_ADMIN = {
-  email: "local-admin@localhost",
-  name: "Local Development Admin",
-  role: "admin",
-};
-
-function ProtectedAdminRoutes({ user, onLogout }) {
+function ProtectedAdminRoutes({ user }) {
   return (
     <Routes>
       <Route
         path="/"
-        element={<AdminLayout user={user} onLogout={onLogout} />}
+        element={<AdminLayout user={user} />}
       >
         <Route index element={<AdminDashboardPage />} />
 
@@ -73,137 +63,112 @@ function ProtectedAdminRoutes({ user, onLogout }) {
 }
 
 export default function App() {
-  const navigate = useNavigate();
-
   const [user, setUser] = useState(null);
   const [checkingSession, setCheckingSession] = useState(true);
-
-  // Bypass is available only when running Vite locally
-  // and the explicit development flag is enabled.
-  const localAdminBypass =
-    import.meta.env.DEV &&
-    import.meta.env.VITE_ADMIN_DEV_BYPASS === "true";
-
-  // In local development, use a temporary local admin identity.
-  // In production, use only the verified server session.
-  const activeUser = localAdminBypass ? LOCAL_DEV_ADMIN : user;
+  const [sessionError, setSessionError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
 
-    // Skip login/session validation only for local development.
-    if (localAdminBypass) {
-      setCheckingSession(false);
+    async function verifyAdminAccess() {
+      setCheckingSession(true);
+      setSessionError("");
 
-      return () => {
-        cancelled = true;
-      };
-    }
+      try {
+        // The API helper obtains a short-lived token securely.
+        const result = await api("/auth/me");
+        const verifiedUser = result?.user || result?.data?.user;
 
-    const token = localStorage.getItem("projenius_admin_token");
-
-    if (!token) {
-      setUser(null);
-      setCheckingSession(false);
-
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    api("/auth/me")
-      .then((result) => {
-        if (cancelled) return;
-
-        const authenticatedUser = result?.user || result?.data?.user;
-
-        setUser(authenticatedUser || null);
-
-        if (!authenticatedUser) {
-          localStorage.removeItem("projenius_admin_token");
+        if (!verifiedUser || verifiedUser.role !== "admin") {
+          throw new Error(
+            "Admin access could not be verified. Check the admin API configuration."
+          );
         }
-      })
-      .catch(() => {
-        localStorage.removeItem("projenius_admin_token");
 
         if (!cancelled) {
-          setUser(null);
+          setUser({
+            ...verifiedUser,
+            name: verifiedUser.name || "ProJenius Admin",
+          });
         }
-      })
-      .finally(() => {
+      } catch (error) {
+        if (!cancelled) {
+          setUser(null);
+          setSessionError(
+            error?.message || "Unable to connect to the admin service."
+          );
+        }
+      } finally {
         if (!cancelled) {
           setCheckingSession(false);
         }
-      });
+      }
+    }
+
+    verifyAdminAccess();
 
     return () => {
       cancelled = true;
     };
-  }, [localAdminBypass]);
-
-  const handleLogin = useCallback(
-    (result) => {
-      const authenticatedUser = result?.user || result?.data?.user;
-
-      if (!authenticatedUser) {
-        throw new Error(
-          "The server did not return an administrator session."
-        );
-      }
-
-      setUser(authenticatedUser);
-      navigate("/", { replace: true });
-    },
-    [navigate]
-  );
-
-  const logout = useCallback(() => {
-    if (localAdminBypass) {
-      // Local bypass mode has no real login session to clear.
-      setUser(LOCAL_DEV_ADMIN);
-      navigate("/", { replace: true });
-      return;
-    }
-
-    localStorage.removeItem("projenius_admin_token");
-    setUser(null);
-
-    navigate("/login", { replace: true });
-  }, [navigate, localAdminBypass]);
+  }, [retryCount]);
 
   if (checkingSession) {
     return (
-      <main className="login-page">
-        <p role="status">Checking admin session…</p>
+      <main
+        style={{
+          minHeight: "100vh",
+          display: "grid",
+          placeItems: "center",
+          padding: "24px",
+          fontFamily: "Segoe UI, sans-serif",
+        }}
+      >
+        <p role="status">Connecting to ProJenius Admin...</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          display: "grid",
+          placeItems: "center",
+          padding: "24px",
+          fontFamily: "Segoe UI, sans-serif",
+        }}
+      >
+        <section style={{ maxWidth: "520px", textAlign: "center" }}>
+          <h2>Unable to connect to Admin</h2>
+
+          <p role="alert">
+            {sessionError}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setRetryCount((count) => count + 1)}
+          >
+            Retry Connection
+          </button>
+        </section>
       </main>
     );
   }
 
   return (
     <Routes>
+      {/* The application login page is no longer used. */}
       <Route
         path="/login"
-        element={
-          activeUser ? (
-            <Navigate to="/" replace />
-          ) : (
-            <AdminLoginPage onLogin={handleLogin} />
-          )
-        }
+        element={<Navigate to="/" replace />}
       />
 
       <Route
         path="/*"
-        element={
-          activeUser ? (
-            <ProtectedAdminRoutes
-              user={activeUser}
-              onLogout={logout}
-            />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
+        element={<ProtectedAdminRoutes user={user} />}
       />
     </Routes>
   );
